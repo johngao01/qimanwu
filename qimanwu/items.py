@@ -15,6 +15,7 @@ class QimanwuItem(scrapy.Item):
 class ChapterItem(scrapy.Item):
     manhua_id = scrapy.Field()
     chapter_id = scrapy.Field()
+    index_num = scrapy.Field()
     name = scrapy.Field()
     url = scrapy.Field()
 
@@ -25,6 +26,7 @@ class ContentItem(scrapy.Item):
     manhua_id = scrapy.Field()
     manhua_name = scrapy.Field()
     chapter_id = scrapy.Field()
+    index_num = scrapy.Field()
     chapter_name = scrapy.Field()
     name = scrapy.Field()
     url = scrapy.Field()
