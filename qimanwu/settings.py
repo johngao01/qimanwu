@@ -61,9 +61,9 @@ ROBOTSTXT_OBEY = False
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-# ITEM_PIPELINES = {
-#    "qimanwu.pipelines.QimanwuPipeline": 300,
-# }
+ITEM_PIPELINES = {
+    "qimanwu.pipelines.OraclePipeline": 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -91,9 +91,12 @@ REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
 
-base_url = 'http://m.qiman52.com/'
-manhua_chapters = base_url + 'bookchapter/'
-manhua_items = {
+BASE_URL = 'http://m.qiman52.com/'
+MANHUA_CHAPTERS = BASE_URL + 'bookchapter/'
+MANHUA_ITEMS = {
     '16177': '斗破苍穹',
-    '12693': '斗罗大陆'
 }
+
+DSN = "localhost/orcl"
+USER = 'qimanwu'
+PASSWORD = '123456'
