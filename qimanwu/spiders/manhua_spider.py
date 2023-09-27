@@ -1,9 +1,11 @@
 import json
 import re
-from ..settings import *
 from typing import Any
-from ..items import *
+
 from scrapy import FormRequest, Request, Spider
+
+from ..items import *
+from ..settings import *
 
 
 class ManhuaSpider(Spider):
@@ -22,9 +24,14 @@ class ManhuaSpider(Spider):
                                                               'chapter_path': chapter_path})
 
     def parse_index(self, response):
+        """
+        处理漫画作品中的所有显示章节，将章节地址传给self.parse_chapter，获取章节内的图片
+        :param response: 访问漫画作品首页的响应
+        :return:
+        """
         urls = response.xpath('//div[@class="catalog-list"]/ul/li').re(r"href=\".*?\"")
         url_num = len(urls)
-        start_index = int(response.meta['startindex'])
+        start_index = int(response.meta['start_index'])
         start_index += url_num
         for i in range(len(urls)):
             urls[i] = urls[i][6: -1]
@@ -38,18 +45,31 @@ class ManhuaSpider(Spider):
             start_index -= 1
 
     def parse(self, response, **kwargs):
+        """
+        处理漫画作品中的所有隐藏章节，将章节地址传给self.parse_chapter，获取章节内的图片
+        :param response: 获取漫画隐藏章节的响应
+        :param kwargs: 字典，包括漫画的id、名字、首页地址
+        :return:
+        """
         response = json.loads(response.text)
         k = 0
-        yield Request(kwargs['chapter_path'], callback=self.parse_index, meta={'startindex': len(response)})
+        yield Request(kwargs['chapter_path'], callback=self.parse_index, meta={'start_index': len(response)})
         for index in response:
             k += 1
             new_url = kwargs['chapter_path'] + index["id"] + ".html"
             yield Request(url=new_url, callback=self.parse_chapter,
                           meta={'chapter_name': ("%05d" % (len(response) - k + 1)) + "_" + index["name"]},
-                          cb_kwargs={'manhua_id': kwargs['manhua_id'], 'manhua_name': kwargs['manhua_name']})
+                          cb_kwargs={'manhua_id': kwargs['manhua_id'], 'manhua_name': kwargs['manhua_name'],
+                                     'chapter_id': index["id"], 'chapter_name': index["name"]})
 
     # 获取并解析漫画网页顺序
     def parse_chapter(self, response, **kwargs):
+        chapter_item = ChapterItem()
+        chapter_item['manhua_id'] = kwargs['manhua_id']
+        chapter_item['chapter_id'] = kwargs['chapter_id']
+        chapter_item['name'] = kwargs['chapter_name']
+        chapter_item['url'] = response.url.replace(base_url, '')
+        yield chapter_item
         urls = ''
         vals = []
         for sel in response.xpath('//script').re(r'\[.*?\]'):
@@ -78,12 +98,13 @@ class ManhuaSpider(Spider):
                         rel_url = rel_url + i
                 else:
                     rel_url = rel_url + i
-            item = ImageSpiderItem()
-            item['url'] = rel_url
-            item['name'] = "%05d" % index
-            item['chapter_name'] = response.meta['chapter_name']
+            item = ContentItem()
             item['manhua_id'] = kwargs['manhua_id']
             item['manhua_name'] = kwargs['manhua_name']
+            item['chapter_id'] = response.meta['chapter_id']
+            item['chapter_name'] = response.meta['chapter_name']
+            item['name'] = "%04d" % index
+            item['url'] = rel_url
             index += 1
             yield item
 
