@@ -3,10 +3,10 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 
-
 # useful for handling different item types with a single interface
 import cx_Oracle
-from scrapy.exceptions import DropItem
+from scrapy import Request
+from scrapy.pipelines.images import ImagesPipeline
 
 from .items import *
 
@@ -57,7 +57,19 @@ class OraclePipeline:
         except cx_Oracle.DatabaseError as e:
             # 处理插入失败的情况
             self.conn.rollback()
-            print(e)
-            raise DropItem(f"Failed to insert item into Oracle: {str(e)}")
-
         return item
+
+
+class MyImagesPipeline(ImagesPipeline):
+
+    def get_media_requests(self, item, info):
+        if isinstance(item, ContentItem):
+            yield Request(item['url'], meta={'name': item['name'], 'manhua_name': item['manhua_name'],
+                                             'chapter_dirname': item['chapter_dirname']})
+        else:
+            return item
+
+    def file_path(self, request, response=None, info=None, *, item=None):
+        filepath = u'{0}/{1}/{2}'.format(request.meta['manhua_name'], request.meta['chapter_dirname'],
+                                         request.meta['name'])
+        return filepath

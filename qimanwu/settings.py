@@ -6,6 +6,7 @@
 #     https://docs.scrapy.org/en/latest/topics/settings.html
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+import os.path
 
 BOT_NAME = "qimanwu"
 
@@ -62,6 +63,7 @@ ROBOTSTXT_OBEY = False
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
+    "qimanwu.pipelines.MyImagesPipeline": 299,
     "qimanwu.pipelines.OraclePipeline": 300,
 }
 
@@ -100,3 +102,4 @@ MANHUA_ITEMS = {
 DSN = "localhost/orcl"
 USER = 'qimanwu'
 PASSWORD = '123456'
+IMAGES_STORE = os.path.join(r'E:\奇漫屋')
