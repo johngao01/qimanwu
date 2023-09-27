@@ -42,7 +42,7 @@ class ManhuaSpider(Spider):
         for i in range(len(urls)):
             chapter_id = urls[i][len(kwargs['manhua_id']) + 2:-5]
             yield Request(BASE_URL + urls[i], callback=self.parse_chapter,
-                          meta={'chapter_name': ("%05d" % start_index) + "_" + names[i]},
+                          meta={'chapter_dirname': ("%04d" % start_index) + "_" + names[i]},
                           cb_kwargs={'manhua_id': kwargs['manhua_id'], 'manhua_name': kwargs['manhua_name'],
                                      'chapter_id': chapter_id, 'chapter_name': names[i], 'index_num': start_index})
             start_index -= 1
@@ -64,7 +64,7 @@ class ManhuaSpider(Spider):
             new_url = kwargs['chapter_path'] + index["id"] + ".html"
             index_num = chapter_nums - k + 1
             yield Request(url=new_url, callback=self.parse_chapter,
-                          meta={'chapter_name': ("%05d" % index_num) + "_" + index["name"]},
+                          meta={'chapter_dirname': ("%04d" % index_num) + "_" + index["name"]},
                           cb_kwargs={'manhua_id': kwargs['manhua_id'], 'manhua_name': kwargs['manhua_name'],
                                      'chapter_id': index["id"], 'chapter_name': index["name"], 'index_num': index_num})
 
@@ -110,7 +110,8 @@ class ManhuaSpider(Spider):
             item['manhua_name'] = kwargs['manhua_name']
             item['chapter_id'] = kwargs['chapter_id']
             item['chapter_name'] = kwargs['chapter_name']
-            item['name'] = "%03d" % index
+            item['chapter_dirname'] = response.meta['chapter_dirname']
+            item['name'] = "%03d" % index + ".jpg"
             item['index_num'] = index
             item['url'] = rel_url
             index += 1
