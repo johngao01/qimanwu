@@ -28,5 +28,6 @@ class ContentItem(scrapy.Item):
     chapter_id = scrapy.Field()
     index_num = scrapy.Field()
     chapter_name = scrapy.Field()
+    chapter_dirname = scrapy.Field()
     name = scrapy.Field()
     url = scrapy.Field()
