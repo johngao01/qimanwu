@@ -97,17 +97,13 @@ BASE_URL = 'http://m.qiman52.com/'
 MANHUA_CHAPTERS = BASE_URL + 'bookchapter/'
 MANHUA_ITEMS = {
     '16177': '斗破苍穹',
-    '12693': '斗罗大陆',
     '14401': '斗罗大陆2绝世唐门',
     '15592': '斗罗大陆4终极斗罗',
     '24753': '大奉打更人',
-    '15224': '斗罗大陆外传神界传说',
     '23658': '斗罗大陆3龙王传说',
-    '14473': '砂与海之歌',
-    '14413': '偷星九月天'
 }
 
 DSN = "localhost/orcl"
 USER = 'qimanwu'
 PASSWORD = '123456'
-IMAGES_STORE = os.path.join(r'E:\奇漫屋')
+IMAGES_STORE = os.path.join(r'E:\奇漫屋\漫画')
